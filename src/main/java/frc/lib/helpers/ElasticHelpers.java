@@ -8,7 +8,7 @@ public class ElasticHelpers {
      * @param factor multiplier (e.g. 2 for doubling, 3 for tripling)
      * @param n step index (0,1,2,...)
      */
-    public static double getValue(double baseValue, double factor, int n) {
+    public static double getValue(double baseValue, double factor, double n) {
         return baseValue * Math.pow(factor , n);
     }
 

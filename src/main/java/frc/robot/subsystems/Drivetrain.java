@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.helpers.ElasticHelpers;
+import frc.lib.helpers.ElasticPublisher;
 
 public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
@@ -26,6 +28,15 @@ public class Drivetrain extends SubsystemBase {
 
   DifferentialDrive m_Drive;
 
+  ElasticHelpers m_BaseValues = new ElasticHelpers();
+
+  ElasticPublisher m_TankLimits = new ElasticPublisher(
+      "Tank Speed Multiplier", m_BaseValues.getValue(0.4, 1, 0.1));
+
+  double m_LeftStick;
+  double m_RightStick;
+
+
   public Drivetrain() {
 
     m_FrontLeftDrive.setInverted(true);
@@ -34,10 +45,14 @@ public class Drivetrain extends SubsystemBase {
     m_BackRightDrive.set(TalonSRXControlMode.Follower, 12);
 
     m_Drive = new DifferentialDrive( m_FrontLeftDrive, m_FrontRightDrive);
+
   }
 
   public void curvatureDrive() {
-    m_Drive.curvatureDrive(m_Driver.getLeftY(), m_Driver.getRightX(), true);
+
+    double limit = Math.min(m_TankLimits.getSelectedValue(), 1.0);
+
+    m_Drive.curvatureDrive(m_Driver.getLeftY() * limit, m_Driver.getRightX() * limit, true);
   }
   @Override
   public void periodic() {
